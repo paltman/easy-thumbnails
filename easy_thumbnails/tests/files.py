@@ -40,23 +40,26 @@ class FilesTest(test_utils.BaseTest):
         local = self.thumbnailer.get_thumbnail({'size': (100, 100)})
         remote = self.remote_thumbnailer.get_thumbnail({'size': (100, 100)})
 
+        local_url = local.storage.url(local.name)
+        remote_url = remote.storage.url(remote.name)
+
         self.assertEqual(local.tag(), '<img alt="" height="75" '
-            'src="%s" width="100" />' % local.name)
+            'src="%s" width="100" />' % local_url)
         self.assertEqual(local.tag(alt='A & B'), '<img alt="A &amp; B" '
-            'height="75" src="%s" width="100" />' % local.name)
+            'height="75" src="%s" width="100" />' % local_url)
 
         # Can turn off dimensions.
         self.assertEqual(remote.tag(use_size=False), '<img alt="" '
-            'src="%s" />' % remote.name)
+            'src="%s" />' % remote_url)
 
         # Thumbnails on remote storage don't get dimensions...  
         self.assertEqual(remote.tag(), '<img alt="" '
-            'src="%s" />' % remote.name)
+            'src="%s" />' % remote_url)
         # ...unless explicitly requested.
         self.assertEqual(remote.tag(use_size=True), '<img alt="" height="75" '
-            'src="%s" width="100" />' % remote.name)
+            'src="%s" width="100" />' % remote_url)
 
         # All other arguments are passed through as attributes.
         self.assertEqual(local.tag(**{'rel': 'A&B', 'class': 'fish'}),
             '<img alt="" class="fish" height="75" rel="A&amp;B" '
-            'src="%s" width="100" />' % local.name)
+            'src="%s" width="100" />' % local_url)
